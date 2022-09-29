@@ -15,9 +15,9 @@ defmodule OmbuOssNotifier.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: OmbuOssNotifier.PubSub},
       # Start the Endpoint (http/https)
-      OmbuOssNotifierWeb.Endpoint
+      OmbuOssNotifierWeb.Endpoint,
       # Start a worker by calling: OmbuOssNotifier.Worker.start_link(arg)
-      # {OmbuOssNotifier.Worker, arg}
+      OmbuOssNotifier.IssuesNotificationsJob
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
