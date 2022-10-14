@@ -9,7 +9,7 @@ defmodule OmbuOssNotifier.IssuesNotificationsJob do
   end
 
   def init(state) do
-    schedule()
+    schedule(Time.new!(11, 0, 0))
     
     {:ok, state}
   end
@@ -20,15 +20,29 @@ defmodule OmbuOssNotifier.IssuesNotificationsJob do
     Fastruby.list_issues()
     |> SlackNotifier.notify()
     
-    # work is done, let's schedule again
-    schedule()
+    # For now, this will be in UTC
+    Time.new!(11, 0, 0)
+    |> schedule()
     
     {:noreply, state}
   end
   
-  defp schedule() do
-    # schedule after one minute
-    Process.send_after(self(), :work, 10000)
+  defp schedule(time) do
+    time_diff_seconds = DateTime.utc_now()
+    |> calculate_time_diff(time)
+
+    Process.send_after(self(), :work, time_diff_seconds*1000)
   end
 
+  def calculate_time_diff(today, time) when today.hour >= time.hour do
+    tomorrow = DateTime.add(today, 1, :day)
+    Date.new!(tomorrow.year, tomorrow.month, tomorrow.day)
+    |> DateTime.new!(time)
+    |> DateTime.diff(today)
+  end
+  def calculate_time_diff(today, time) do
+    Date.new!(today.year, today.month, today.day)
+    |> DateTime.new!(time)
+    |> DateTime.diff(today)
+  end
 end
