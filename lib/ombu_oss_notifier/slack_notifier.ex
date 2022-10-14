@@ -1,16 +1,39 @@
 defmodule OmbuOssNotifier.SlackNotifier do
   alias OmbuOssNotifier.SlackBlockKit
-  
-  def notify(issues) do
-    slack_bot_url = "https://hooks.slack.com/services/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"
-    headers = [
-      "Content-type": "application/json"
-    ]
 
-    payload = Enum.map(issues, fn issue -> SlackBlockKit.link_button(issue.title, "Github", issue.url, issue.url) end)
+  @post_message_url "https://slack.com/api/chat.postMessage"
+
+  def notify(%{"message" => message}) do
+    SlackBlockKit.section(message)
     |> SlackBlockKit.blocks()
+    |> add_channel()
     |> Poison.encode!()
+    |> post_to_slack()
+  end  
+  def notify(issues) do
+    Enum.map(issues, fn issue -> SlackBlockKit.link_button(issue.title, "Github", issue.url, issue.url) end)
+    |> SlackBlockKit.blocks()
+    |> add_channel()
+    |> Poison.encode!()
+    |> post_to_slack()
+  end
 
-    HTTPoison.post(slack_bot_url, payload, headers)
+  defp add_channel(content) do
+    Map.new([{"channel", Application.fetch_env!(:ombu_oss_notifier, :channel_id)}])
+    |> Map.merge(content)
+  end
+
+  defp post_to_slack(payload) do
+    case HTTPoison.post(@post_message_url, payload, headers()) do
+      {:ok, reponse} -> IO.puts("Message sent!")
+      {:error, reason} -> IO.inspect(reason)
+    end
+  end
+
+  defp headers() do
+    [
+      "Content-type": "application/json",
+      "Authorization": "Bearer #{Application.fetch_env!(:ombu_oss_notifier, :slack_api_token)}"
+    ]
   end
 end
