@@ -38,11 +38,12 @@ defmodule OmbuOssNotifier.Fastruby do
 
     case page_repos do
       [] -> repos
-      %{"message" => _} -> [%Issue{title: "API rate limit reached", url: ""}]
+      %{"message" => message} -> %{"message" => message}
       _ -> get_org_repos(repos_url, headers, page + 1, Enum.concat(repos, page_repos))
     end
   end
 
+  defp get_org_issues(%{"message" => message}, _), do: %{"message" => message}
   defp get_org_issues(repos, headers) do
     repos
     |> Enum.map(fn(repo_map) -> Map.take(repo_map, @expected_repo_fields) end)
