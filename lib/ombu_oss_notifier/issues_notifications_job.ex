@@ -20,11 +20,19 @@ defmodule OmbuOssNotifier.IssuesNotificationsJob do
     Fastruby.list_issues()
     |> SlackNotifier.notify()
     
-    # For now, this will be in UTC
-    Time.new!(11, 0, 0)
-    |> schedule()
+    run_in(24, :hour)
     
     {:noreply, state}
+  end
+
+  def run_in(time, :second) do
+    Process.send_after(self(), :work, time*1000)
+  end
+  def run_in(time, :minute) do
+    Process.send_after(self(), :work, time*60*1000)
+  end
+  def run_in(time, :hour) do
+    Process.send_after(self(), :work, time*60*60*1000)
   end
   
   defp schedule(time) do
