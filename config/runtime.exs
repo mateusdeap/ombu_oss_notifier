@@ -68,6 +68,7 @@ case config_env() do
       secret_key_base: secret_key_base
 
     config :ombu_oss_notifier, slack_api_token: env!("SLACK_API_TOKEN", :string!)
+    config :ombu_oss_notifier, channel_id: env!("CHANNEL_ID", :string!)
   :dev ->
     config :ombu_oss_notifier, OmbuOssNotifier.Repo,
       username: env!("DATABASE_USERNAME", :string!),
