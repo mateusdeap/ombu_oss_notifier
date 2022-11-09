@@ -39,7 +39,7 @@ defmodule OmbuOssNotifier.IssuesNotificationsJob do
     time_diff_seconds = DateTime.utc_now()
     |> calculate_time_diff(time)
 
-    Process.send_after(self(), :work, time_diff_seconds*1000)
+    run_in(time_diff_seconds)
   end
 
   def calculate_time_diff(today, time) when today.hour >= time.hour do
