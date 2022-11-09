@@ -11,6 +11,8 @@ defmodule OmbuOssNotifier.SlackBlockKit do
   def add_element_to(element, content \\ []) do
     List.insert_at(content, -1, element)
   end
+
+  def link_button(content \\ [], link_text, button_text, value, url) do
     %{
       "type" => "section",
       "text" => %{
@@ -28,17 +30,19 @@ defmodule OmbuOssNotifier.SlackBlockKit do
         "url" => url,
         "action_id" => "button-action"
       }
-    }
+    } |> add_element_to(content)
   end
 
-  def section(text) do
+  def section(content \\ [], text) do
     %{
       "type" => "section",
       "text" => %{
         "type" => "mrkdwn",
         "text" => text
       }
-    }
+    } |> add_element_to(content)
+  end
+
   def divider(content \\ []) do
     %{
       "type" => "divider"
