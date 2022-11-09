@@ -4,14 +4,24 @@ defmodule OmbuOssNotifier.SlackNotifier do
   @post_message_url "https://slack.com/api/chat.postMessage"
 
   def notify(%{"message" => message}) do
-    SlackBlockKit.section(message)
+    SlackBlockKit.section([], message)
+    |> SlackBlockKit.blocks()
+    |> add_channel()
+    |> Poison.encode!()
+    |> post_to_slack()
+  end
+  def notify([]) do
+    SlackBlockKit.section([], "The Force in balance it is. Issues our attention they do not need.")
     |> SlackBlockKit.blocks()
     |> add_channel()
     |> Poison.encode!()
     |> post_to_slack()
   end  
   def notify(issues) do
-    Enum.map(issues, fn issue -> SlackBlockKit.link_button(issue.title, "Github", issue.url, issue.url) end)
+    content = SlackBlockKit.section([], "I sense a disturbance in the force... these issues are slipping to the Dark Side...")
+    |> SlackBlockKit.divider()
+
+    Enum.reduce(issues, content, fn issue, acc -> SlackBlockKit.link_button(acc, issue.title, "Github", issue.url, issue.url) end)
     |> SlackBlockKit.blocks()
     |> add_channel()
     |> Poison.encode!()
