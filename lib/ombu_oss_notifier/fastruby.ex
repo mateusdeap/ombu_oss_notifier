@@ -52,7 +52,7 @@ defmodule OmbuOssNotifier.Fastruby do
   end
 
   defp get_repo_issues(repo, headers) do
-    issues_url = "https://api.github.com/repos/fastruby/#{repo}/issues?labels=bug"
+    issues_url = "https://api.github.com/repos/fastruby/#{repo}/issues?labels=help%20wanted"
     HTTPoison.get!(issues_url, headers).body
     |> Poison.decode!
     |> Enum.map(fn(map) -> Map.take(map, @expected_fields) end)
