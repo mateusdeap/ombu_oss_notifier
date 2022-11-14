@@ -47,7 +47,7 @@ defmodule OmbuOssNotifier.SlackNotifier do
 
   defp post_to_slack(payload) do
     case HTTPoison.post(@post_message_url, payload, headers()) do
-      {:ok, reponse} -> IO.puts("Message sent!")
+      {:ok, _response} -> IO.puts("Message sent!")
       {:error, reason} -> IO.inspect(reason)
     end
   end
