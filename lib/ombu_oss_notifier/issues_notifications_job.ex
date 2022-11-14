@@ -15,14 +15,47 @@ defmodule OmbuOssNotifier.IssuesNotificationsJob do
   end
 
   def handle_info(:work, state) do
-    # the actual work to be done
-    IO.puts("Running job ...")
-    Fastruby.list_issues()
-    |> SlackNotifier.notify()
-    
-    run_in(24, :hour)
+    cond do
+      is_saturday() -> run_in(48, :hour)
+      is_sunday() -> run_in(24, :hour)
+      is_weekday() ->
+        Fastruby.list_issues()
+        |> SlackNotifier.notify()
+        
+        run_in(24, :hour)
+    end
     
     {:noreply, state}
+  end
+
+  def current_weekday do
+    today = Date.utc_today()
+            |> Date.day_of_week()
+
+    case today do
+      1 -> :monday
+      2 -> :tuesday
+      3 -> :wednesday
+      4 -> :thursday
+      5 -> :friday
+      6 -> :saturday
+      7 -> :sunday
+    end
+  end
+
+  @spec is_saturday() :: boolean
+  def is_saturday do
+    current_weekday() == :saturday
+  end
+
+  @spec is_sunday() :: boolean
+  def is_sunday do
+    current_weekday() == :sunday
+  end
+
+  @spec is_weekday() :: boolean
+  def is_weekday do
+    !is_saturday() && !is_sunday()
   end
 
   def run_in(time, :second) do
