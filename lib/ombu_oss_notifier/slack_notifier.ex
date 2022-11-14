@@ -6,16 +6,12 @@ defmodule OmbuOssNotifier.SlackNotifier do
   def notify(%{"message" => message}) do
     SlackBlockKit.section([], message)
     |> SlackBlockKit.blocks()
-    |> add_channel()
-    |> Poison.encode!()
-    |> post_to_slack()
+    |> do_notify()
   end
   def notify([]) do
     SlackBlockKit.section([], "The Force in balance it is. Issues our attention they do not need.")
     |> SlackBlockKit.blocks()
-    |> add_channel()
-    |> Poison.encode!()
-    |> post_to_slack()
+    |> do_notify()
   end  
   def notify(issues) do
     content = SlackBlockKit.section([], "I sense a disturbance in the force... these issues are slipping to the Dark Side...")
@@ -23,9 +19,25 @@ defmodule OmbuOssNotifier.SlackNotifier do
 
     Enum.reduce(issues, content, fn issue, acc -> SlackBlockKit.link_button(acc, issue.title, "Github", issue.url, issue.url) end)
     |> SlackBlockKit.blocks()
-    |> add_channel()
+    |> do_notify()
+  end
+
+  defp do_notify(content) do
+    add_channel(content)
+    |> add_username()
+    |> add_icon()
     |> Poison.encode!()
     |> post_to_slack()
+  end
+
+  def add_username(content) do
+    Map.new([{"username", "Master Yoda"}])
+    |> Map.merge(content)
+  end
+
+  def add_icon(content) do
+    Map.new([{"icon_url", "https://pbs.twimg.com/profile_images/3464665605/463d56a85545a3852fb4784ab947fba4_bigger.jpeg"}])
+    |> Map.merge(content)
   end
 
   defp add_channel(content) do
