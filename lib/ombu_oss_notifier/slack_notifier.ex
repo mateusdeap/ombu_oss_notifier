@@ -9,12 +9,12 @@ defmodule OmbuOssNotifier.SlackNotifier do
     |> do_notify()
   end
   def notify([]) do
-    SlackBlockKit.section([], "The Force in balance it is. Issues our attention they do not need.")
+    SlackBlockKit.section([], "In balance, the Force is. Our attention, the Issues do not need.")
     |> SlackBlockKit.blocks()
     |> do_notify()
   end  
   def notify(issues) do
-    content = SlackBlockKit.section([], "I sense a disturbance in the force... these issues are slipping to the Dark Side...")
+    content = SlackBlockKit.section([], "A disturbance in the Force, I sense... turning to the Dark Side, these issues are...")
     |> SlackBlockKit.divider()
 
     Enum.reduce(issues, content, fn issue, acc -> SlackBlockKit.link_button(acc, issue.title, "Github", issue.url, issue.url) end)
