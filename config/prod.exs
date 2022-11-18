@@ -11,12 +11,12 @@ import Config
 # before starting your production server.
 config :ombu_oss_notifier, OmbuOssNotifierWeb.Endpoint,
   load_from_system_env: true,
-  url: [scheme: "https", host: "ombu-oss-notifier.herokuapp.com", port: 443],
+  url: [scheme: "https", host: "ombu-oss-notifier.herokuapp.com", port: System.get_env("PORT")],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
 
 # Do not print debug messages in production
-config :logger, level: :debug
+config :logger, level: :info
 
 # ## SSL Support
 #
