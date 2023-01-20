@@ -9,7 +9,6 @@ defmodule OmbuOssNotifier.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      OmbuOssNotifier.Repo,
       # Start the Telemetry supervisor
       OmbuOssNotifierWeb.Telemetry,
       # Start the PubSub system

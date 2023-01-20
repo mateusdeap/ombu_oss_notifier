@@ -27,15 +27,8 @@ case config_env() do
   :prod ->
     config :ombu_oss_notifier, slack_api_token: env!("SLACK_API_TOKEN", :string!)
     config :ombu_oss_notifier, channel_id: env!("CHANNEL_ID", :string!)
+
   :dev ->
-    config :ombu_oss_notifier, OmbuOssNotifier.Repo,
-      username: env!("DATABASE_USERNAME", :string!),
-      password: env!("DATABASE_PASSWORD", :string!),
-      hostname: env!("DATABASE_HOST", :string!),
-      database: env!("DATABASE_NAME", :string!),
-      stacktrace: true,
-      show_sensitive_data_on_connection_error: true,
-      pool_size: 10
     config :ombu_oss_notifier, slack_api_token: env!("SLACK_API_TOKEN", :string!)
     config :ombu_oss_notifier, channel_id: env!("CHANNEL_ID", :string!)
 end

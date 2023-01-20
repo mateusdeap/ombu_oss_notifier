@@ -7,10 +7,7 @@
 # General application configuration
 import Config
 
-config :ombu_oss_notifier,
-  ecto_repos: [OmbuOssNotifier.Repo]
-
-# Configures the endpoint
+# # Configures the endpoint
 config :ombu_oss_notifier, OmbuOssNotifierWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [view: OmbuOssNotifierWeb.ErrorView, accepts: ~w(json), layout: false],
