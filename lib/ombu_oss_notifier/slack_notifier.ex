@@ -8,16 +8,24 @@ defmodule OmbuOssNotifier.SlackNotifier do
     |> SlackBlockKit.blocks()
     |> do_notify()
   end
+
   def notify([]) do
     SlackBlockKit.section([], "In balance, the Force is. Our attention, the Issues do not need.")
     |> SlackBlockKit.blocks()
     |> do_notify()
-  end  
-  def notify(issues) do
-    content = SlackBlockKit.section([], "A disturbance in the Force, I sense... turning to the Dark Side, these issues are...")
-    |> SlackBlockKit.divider()
+  end
 
-    Enum.reduce(issues, content, fn issue, acc -> SlackBlockKit.link_button(acc, issue.title, "Github", issue.url, issue.url) end)
+  def notify(issues) do
+    content =
+      SlackBlockKit.section(
+        [],
+        "A disturbance in the Force, I sense... turning to the Dark Side, these issues are..."
+      )
+      |> SlackBlockKit.divider()
+
+    Enum.reduce(issues, content, fn issue, acc ->
+      SlackBlockKit.link_button(acc, issue.title, "Github", issue.url, issue.url)
+    end)
     |> SlackBlockKit.blocks()
     |> do_notify()
   end
@@ -36,7 +44,10 @@ defmodule OmbuOssNotifier.SlackNotifier do
   end
 
   def add_icon(content) do
-    Map.new([{"icon_url", "https://pbs.twimg.com/profile_images/3464665605/463d56a85545a3852fb4784ab947fba4_bigger.jpeg"}])
+    Map.new([
+      {"icon_url",
+       "https://pbs.twimg.com/profile_images/3464665605/463d56a85545a3852fb4784ab947fba4_bigger.jpeg"}
+    ])
     |> Map.merge(content)
   end
 
@@ -55,7 +66,7 @@ defmodule OmbuOssNotifier.SlackNotifier do
   defp headers() do
     [
       "Content-type": "application/json",
-      "Authorization": "Bearer #{Application.fetch_env!(:ombu_oss_notifier, :slack_api_token)}"
+      Authorization: "Bearer #{Application.fetch_env!(:ombu_oss_notifier, :slack_api_token)}"
     ]
   end
 end
